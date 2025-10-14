@@ -24,7 +24,6 @@ const giftLinkSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Índice para busca rápida
-giftLinkSchema.index({ linkId: 1 });
+
 
 export default mongoose.model("GiftLink", giftLinkSchema);
