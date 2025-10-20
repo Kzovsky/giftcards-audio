@@ -5,7 +5,7 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
-// --- Registro de usuário (para criar admin uma única vez) ---
+
 router.post("/register", async (req, res) => {
   try {
     const { email, password, role } = req.body;
@@ -23,7 +23,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// --- Login ---
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;

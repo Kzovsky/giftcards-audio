@@ -7,7 +7,6 @@ import {
   Eye, EyeOff, Lock, Shield, LogOut, Check, X, AlertCircle, QrCode, Download, Plus, Filter, Trash2, CheckSquare, Square, Loader2, LogIn,
 } from "lucide-react";
 
-// Definição da Interface
 interface GiftLink {
   _id: string;
   linkId: string;
@@ -16,7 +15,6 @@ interface GiftLink {
   recordedAt?: string;
 }
 
-// URL base da API
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 function ConfirmDialog({
@@ -66,10 +64,10 @@ export default function AdminPage() {
   const [loadingLinks, setLoadingLinks] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [filterVisible, setFilterVisible] = useState(false);
-  // Estado restaurado para o QR Code
+ 
   const [qrPreview, setQrPreview] = useState<{ id: string; img: string } | null>(null); 
   
-  // Estado dos Filtros
+
   const [filters, setFilters] = useState({
     id: "",
     status: "",
@@ -95,7 +93,7 @@ const showConfirm = (title: string, message: string, onConfirm: () => void) => {
   });
 };
 
-  // 🔹 Inicialização
+
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
@@ -107,7 +105,7 @@ const showConfirm = (title: string, message: string, onConfirm: () => void) => {
     }
   }, []);
 
-  // 🔹 Login
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError(null);
@@ -146,7 +144,7 @@ const showConfirm = (title: string, message: string, onConfirm: () => void) => {
     }
   };
 
-  // 🔹 Logout
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setToken(null);
@@ -155,7 +153,7 @@ const showConfirm = (title: string, message: string, onConfirm: () => void) => {
     setAuthError("Você foi desconectado.");
   };
 
-  // 🔹 Busca links
+
   const fetchLinks = async (tokenParam?: string) => {
     const authToken = tokenParam || token;
 
@@ -203,13 +201,7 @@ const showConfirm = (title: string, message: string, onConfirm: () => void) => {
     }
   };
 
-  // -----------------------------------------------------------------
-  // 🔹 FUNÇÕES DE AÇÃO (GenerateLink)
-  // -----------------------------------------------------------------
 
-  /**
-   * @description Gera um novo link de presente através da API.
-   */
   const generateLink = async () => {
 if (!token) {
   toast.error("Token não disponível. Faça login novamente.", {
@@ -261,14 +253,7 @@ if (!token) {
   }
 };
 
-  // -----------------------------------------------------------------
-  // 🔹 FUNÇÕES DE AÇÃO (ValidateLink)
-  // -----------------------------------------------------------------
 
-  /**
-   * @description Ativa/Valida um link pendente através da API.
-   * @param id O ID do link a ser validado (linkId).
-   */
   const validateLink = async (id: string) => {
   if (!token) return;
   try {
@@ -304,9 +289,7 @@ if (!token) {
   }
 };
 
-// -----------------------------------------------------------------
-// 🔹 FUNÇÃO DE AÇÃO (RevokeLink)
-// -----------------------------------------------------------------
+
 const revokeLink = (id: string) => {
   if (!token) return;
   showConfirm(
@@ -350,15 +333,7 @@ const revokeLink = (id: string) => {
 };
 
   
-  // -----------------------------------------------------------------
-  // 🔹 FUNÇÕES DE AÇÃO (ShowQRcode)
-  // -----------------------------------------------------------------
-
-  /**
-   * @description Gera e exibe o QR Code para um link específico.
-   * @function showQRCode
-   * @param id O ID do link (linkId).
-   */
+ 
   const showQRCode = async (id: string) => {
     const linkUrl = `${window.location.origin}/g/${id}`;
     try {
@@ -373,15 +348,6 @@ const revokeLink = (id: string) => {
     }
   };
 
-  // -----------------------------------------------------------------
-  // 🔹 FUNÇÕES DE AÇÃO (DownloadQRcode)
-  // -----------------------------------------------------------------
-
-  /**
-   * @description Gera o QR Code e força o download da imagem PNG.
-   * @function downloadQR
-   * @param id O ID do link (linkId).
-   */
   const downloadQR = async (id: string) => {
     const linkUrl = `${window.location.origin}/g/${id}`;
     try {
@@ -406,9 +372,6 @@ const revokeLink = (id: string) => {
     }
   };
 
-  // -----------------------------------------------------------------
-  // 🔹 FUNÇÕES DE AÇÃO (DeleteSelected)
-  // -----------------------------------------------------------------
 
 const deleteSelected = async () => {
   if (!token) return;
@@ -442,7 +405,7 @@ const deleteSelected = async () => {
             className: "bg-purple-500 text-white font-medium rounded-lg shadow-lg",
           });
           await fetchLinks(token);
-          setSelected([]); // 🟣 Limpa a seleção após exclusão
+          setSelected([]); 
         } else {
           const text = await res.text();
           let errorData = { message: res.statusText };
@@ -455,7 +418,7 @@ const deleteSelected = async () => {
           });
         }
       } catch (err) {
-        console.error("❌ Erro ao excluir links:", err);
+        console.error(" Erro ao excluir links:", err);
         toast.error("Erro de rede ao excluir links.", {
           position: "top-left",
           className: "bg-purple-500 text-white font-medium rounded-lg shadow-lg",
@@ -475,12 +438,12 @@ const deleteSelected = async () => {
     );
   };
 
-  // 🔹 Filtragem
+
   const filteredLinks = useMemo(() => {
     return links.filter(link => {
-        // Filtro por Status
+ 
         if (filters.status && link.status !== filters.status) return false;
-        // Filtro por ID (simples: contém)
+
         if (filters.id && !link.linkId.toLowerCase().includes(filters.id.toLowerCase())) return false;
         
         return true;
@@ -488,7 +451,7 @@ const deleteSelected = async () => {
   }, [links, filters]);
 
 
-  // 🔹 Tela de login (quando não há token)
+
   if (!token) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-700 via-purple-800 to-purple-900 text-white p-4 sm:p-8">
@@ -555,7 +518,7 @@ const deleteSelected = async () => {
     );
   }
 
-  // 🔹 Painel admin (quando há token)
+
   return (
     
     <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-800 to-purple-900 text-white p-4 sm:p-8">
@@ -565,7 +528,7 @@ const deleteSelected = async () => {
             <Shield className="w-7 h-7 text-purple-300"/> Painel de Links
           </h1>
           <div className="flex gap-3 flex-wrap justify-end">
-            {/* Botão para Gerar Novo Link (Generate Link) */}
+
             <button
                 onClick={generateLink}
                 disabled={loadingLinks}
@@ -573,7 +536,7 @@ const deleteSelected = async () => {
             >
                 <Plus className="w-4 h-4" /> Novo Link
             </button>
-            {/* Botão de Filtros */}
+
             <button
               onClick={() => setFilterVisible(!filterVisible)}
               className="flex items-center gap-2 bg-purple-500/80 hover:bg-purple-600 px-4 py-2 rounded-xl shadow-lg transition-all font-semibold text-sm cursor-pointer"
@@ -581,7 +544,7 @@ const deleteSelected = async () => {
               <Filter className="w-4 h-4" />
               Filtros
             </button>
-            {/* Botão de Excluir Selecionados */}
+
             <button
               onClick={deleteSelected}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl shadow-lg transition-all font-semibold text-sm ${
@@ -592,7 +555,7 @@ const deleteSelected = async () => {
             >
               <Trash2 className="w-4 h-4" /> Excluir ({selected.length})
             </button>
-            {/* Botão de Logout */}
+
              <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl shadow-lg transition-all bg-gray-600/80 hover:bg-gray-700 font-semibold text-sm cursor-pointer"
@@ -602,7 +565,7 @@ const deleteSelected = async () => {
           </div>
         </div>
         
-        {/* Formulário de Filtros */}
+
         {filterVisible && (
             <div className="bg-white/10 p-4 mb-6 rounded-xl border border-white/20">
                 <h3 className="text-lg font-semibold mb-3">Opções de Filtro</h3>
@@ -637,7 +600,7 @@ const deleteSelected = async () => {
             </div>
         )}
 
-{/* Modal para Visualização do QR Code */}
+
 
 {qrPreview &&
   createPortal(
@@ -680,7 +643,6 @@ const deleteSelected = async () => {
     document.body
   )}
 
-        {/* Status e Tabela de Links */}
         {loadingLinks ? (
           <div className="flex items-center justify-center py-20 text-purple-200">
             <Loader2 className="w-8 h-8 animate-spin mr-2" />
@@ -743,7 +705,7 @@ const deleteSelected = async () => {
                         : "-"}
                     </td>
                     <td className="p-3 flex flex-wrap gap-2">
-                        {/* BOTÃO VALIDAR (ValidateLink) */}
+
                         {link.status === "PENDING_VALIDATION" && (
                             <button
                                 onClick={() => validateLink(link.linkId)}
@@ -753,7 +715,7 @@ const deleteSelected = async () => {
                                 <Check className="w-4 h-4" /> Validar
                             </button>
                         )}
-                        {/* BOTÃO REVOGAR (RevokeLink) */}
+
                         {link.status !== "REVOKED" && (
                             <button
                                 onClick={() => revokeLink(link.linkId)}
@@ -763,7 +725,6 @@ const deleteSelected = async () => {
                                 <X className="w-4 h-4" /> Revogar
                             </button>
                         )}
-                        {/* BOTÃO VER QR*/}
                         <button
                             onClick={() => showQRCode(link.linkId)}
                             className="px-3 py-1 bg-purple-500/80 hover:bg-purple-600 text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
@@ -771,7 +732,6 @@ const deleteSelected = async () => {
                         >
                             <QrCode className="w-4 h-4" /> Ver QR
                         </button>
-                        {/* BOTÃO BAIXAR QR (DownloadQRcode - CORRIGIDO) */}
                         <button
                             onClick={() => downloadQR(link.linkId)}
                             className="px-3 py-1 bg-indigo-500/80 hover:bg-indigo-600 text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"

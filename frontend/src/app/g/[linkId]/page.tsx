@@ -40,7 +40,7 @@ export default function AudioRecorderPage() {
   const timerRef = useRef<TimerRef>(null);
   const audioRef = useRef<AudioElementRef>(null);
 
-  // 🔹 Buscar status e dados do link
+
   useEffect(() => {
     async function fetchLink() {
       try {
@@ -71,7 +71,7 @@ export default function AudioRecorderPage() {
     if (audioRef.current && audioURL) audioRef.current.load();
   }, [audioURL]);
 
-  // 🔹 Funções de gravação
+
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -164,7 +164,7 @@ export default function AudioRecorderPage() {
         });
       }
     } catch (err) {
-      console.error("❌ Erro ao enviar áudio:", err);
+      console.error("Erro ao enviar áudio:", err);
       toast.error("Erro ao enviar áudio", {
         position: "top-center",
         className: "bg-purple-500 text-white font-medium rounded-lg shadow-lg",
@@ -172,7 +172,7 @@ export default function AudioRecorderPage() {
     }
   };
 
-  // 🔹 Player de áudio
+
   const togglePlayPause = () => {
     if (!audioRef.current) return;
 
@@ -194,7 +194,7 @@ export default function AudioRecorderPage() {
   const formatTime = (seconds: number) =>
     `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, "0")}`;
 
-  // 🔸 Condições
+
   if (!linkData)
     return <div className="flex h-screen items-center justify-center text-white">Carregando...</div>;
 
@@ -212,7 +212,7 @@ export default function AudioRecorderPage() {
     );
   }
 
-  // 🔸 Player após envio
+
   if (hasRecording && audioURL) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-purple-700 to-purple-900 p-4">
@@ -234,7 +234,7 @@ export default function AudioRecorderPage() {
             {isPlaying ? <Pause className="w-6 h-6 text-white" /> : <Play className="w-6 h-6 text-white" />}
           </button>
 
-          {/* Barra de progresso moderna */}
+
           <div className="w-full h-2 bg-white/20 rounded-full mt-4 overflow-hidden">
             <div
               className="h-2 bg-purple-400 transition-all duration-200"
@@ -258,13 +258,13 @@ export default function AudioRecorderPage() {
     );
   }
 
-  // 🔸 Tela de gravação
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-purple-900 flex flex-col items-center justify-center text-white p-4">
       <div className="bg-white/10 backdrop-blur-lg rounded-3xl border border-white/20 p-8 shadow-xl text-center w-full max-w-md">
         <h1 className="text-2xl font-light mb-4">🎙️ Grave sua mensagem</h1>
 
-        {/* Botões de controle */}
+
         {!audioURL ? (
           <div className="flex flex-col items-center justify-center gap-4">
             {!isRecording && (

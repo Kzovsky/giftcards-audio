@@ -1,4 +1,4 @@
-// src/app/layout.tsx
+
 import "./globals.css";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastProvider } from "@/components/ToastProvider";
@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body>
         <main>{children}</main>
-        <ToastProvider /> {/* ✅ Agora os toasts aparecem em todas as páginas */}
+        <ToastProvider />
       </body>
     </html>
   );
