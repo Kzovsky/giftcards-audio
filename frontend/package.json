@@ -9,10 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "lucide-react": "^0.546.0",
     "mongosh": "^2.5.8",
     "next": "15.5.3",
+    "qrcode": "^1.5.4",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
