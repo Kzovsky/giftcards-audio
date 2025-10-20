@@ -12,7 +12,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useParams } from "next/navigation";
-
+import { toast } from 'react-toastify';
 type MediaRecorderRef = MediaRecorder | null;
 type AudioElementRef = HTMLAudioElement | null;
 type TimerRef = number | null | ReturnType<typeof setInterval>;
@@ -97,7 +97,10 @@ export default function AudioRecorderPage() {
       timerRef.current = setInterval(() => setRecordingTime((prev) => prev + 1), 1000);
     } catch (error) {
       console.error("Erro ao acessar microfone:", error);
-      alert("Não foi possível acessar o microfone");
+       toast.error("Microfone não disponível. Verifique as permissões", {
+          position: "top-center",
+          className: "bg-purple-500 text-white font-medium rounded-lg shadow-lg",
+        });
     }
   };
 
@@ -148,15 +151,24 @@ export default function AudioRecorderPage() {
 
       const data = await res.json();
       if (res.ok) {
-        alert("🎉 Gravação enviada com sucesso!");
+        toast.success("🎉 Gravação enviada com sucesso!", {
+          position: "top-center",
+          className: "bg-purple-500 text-white font-medium rounded-lg shadow-lg",
+        });
         setHasRecording(true);
         setLinkData({ ...linkData!, status: "RECORDED", audioUrl: data.audioUrl });
       } else {
-        alert(`Erro: ${data.error}`);
+        toast.error(`Erro: ${data.error}`,{
+          position: "top-center",
+          className: "bg-purple-500 text-white font-medium rounded-lg shadow-lg",
+        });
       }
     } catch (err) {
       console.error("❌ Erro ao enviar áudio:", err);
-      alert("Erro ao enviar áudio");
+      toast.error("Erro ao enviar áudio", {
+        position: "top-center",
+        className: "bg-purple-500 text-white font-medium rounded-lg shadow-lg",
+      });
     }
   };
 

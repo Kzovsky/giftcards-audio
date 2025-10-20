@@ -6,7 +6,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { r2 } from "../services/r2.js";
 import GiftLink from "../models/GiftLink.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 const upload = multer();
 const router = express.Router();
 
@@ -130,17 +130,39 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Erro ao buscar GiftLink" });
   }
 });
-router.post("/delete", async (req, res) => {
+router.post("/delete", authMiddleware, async (req, res) => {
   try {
     const { ids } = req.body;
     if (!ids || !Array.isArray(ids)) {
       return res.status(400).json({ error: "IDs inválidos" });
     }
 
+    // Buscar os links no banco antes de excluir
+    const links = await GiftLink.find({ _id: { $in: ids } });
+
+    // Para cada link, deletar o arquivo de áudio do R2 se existir
+    for (const link of links) {
+      if (link.audioUrl) {
+        try {
+          await r2.send(
+            new DeleteObjectCommand({
+              Bucket: process.env.CLOUDFLARE_R2_BUCKET,
+              Key: link.audioUrl, // ⬅️ É o mesmo caminho que você salva: audios/{linkId}.webm
+            })
+          );
+          console.log(`🗑️ Áudio deletado do R2: ${link.audioUrl}`);
+        } catch (err) {
+          console.error(`⚠️ Falha ao excluir áudio ${link.audioUrl}:`, err);
+        }
+      }
+    }
+
+    // Agora deletar os registros do MongoDB
     await GiftLink.deleteMany({ _id: { $in: ids } });
+
     res.json({ success: true });
   } catch (err) {
-    console.error("Erro ao excluir links:", err);
+    console.error("❌ Erro ao excluir links:", err);
     res.status(500).json({ error: "Erro ao excluir links" });
   }
 });

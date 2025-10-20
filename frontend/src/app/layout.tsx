@@ -1,5 +1,7 @@
+// src/app/layout.tsx
 import "./globals.css";
-import Link from "next/link";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastProvider } from "@/components/ToastProvider";
 
 export const metadata = {
   title: "GiftCards Áudio",
@@ -14,10 +16,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        
-
         <main>{children}</main>
-              </body>
+        <ToastProvider /> {/* ✅ Agora os toasts aparecem em todas as páginas */}
+      </body>
     </html>
   );
 }
