@@ -20,11 +20,11 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const app = express();
 
-// ✅ CORS configurado corretamente
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Permite requests sem origin (como curl)
+      if (!origin) return callback(null, true); 
       if (
         allowedOrigins.some((o) =>
           o instanceof RegExp ? o.test(origin) : o === origin
@@ -42,7 +42,8 @@ app.use(
 );
 
 
-app.options("*", cors());
+app.options("/*", cors());
+
 
 
 app.use(express.json({ type: "application/json" }));
