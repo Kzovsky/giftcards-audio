@@ -9,21 +9,32 @@ import giftLinksRoutes from "./routes/giftLinks.js";
 import cardsRoutes from "./routes/cards.js";
 
 
-
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://giftcards-audio.vercel.app",
+  /\.vercel\.app$/, 
+];
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const app = express();
 
-
-
-
-app.use(cors({
-  origin: ["http://localhost:3000", "https://giftcards-audio.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // permite requests sem origin (ex: Postman)
+      if (allowedOrigins.some((o) => (o instanceof RegExp ? o.test(origin) : o === origin))) {
+        callback(null, true);
+      } else {
+        console.log(" Bloqueado por CORS:", origin);
+        callback(new Error("CORS bloqueado"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
 
 app.use(express.json({ type: "application/json" }));
 
