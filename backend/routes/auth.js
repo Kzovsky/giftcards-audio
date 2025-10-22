@@ -30,6 +30,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    console.log("📩 Dados recebidos:", req.body);
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ error: "Credenciais inválidas" });
@@ -46,6 +47,8 @@ router.post("/login", async (req, res) => {
     res.json({ token });
   } catch (err) {
     console.error(err);
+    console.error("❌ Erro ao registrar usuário:", err);
+    res.status(500).json({ error: "Erro interno no servidor", details: err.message });
     res.status(500).json({ error: "Erro ao fazer login" });
   }
 });
