@@ -8,7 +8,12 @@ const router = express.Router();
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password, role, masterKey } = req.body;
+
+    if (masterKey !== process.env.MASTER_KEY) {
+      return res.status(403).json({ error: "Chave mestre inválida" });
+    }
+
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ error: "Usuário já existe" });
 
@@ -16,7 +21,7 @@ router.post("/register", async (req, res) => {
     const user = new User({ email, password: hashed, role });
     await user.save();
 
-    res.json({ message: "Usuário criado com sucesso" });
+    res.json({ message: "✅ Usuário criado com sucesso" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao registrar usuário" });
