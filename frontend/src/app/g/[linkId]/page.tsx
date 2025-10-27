@@ -53,7 +53,7 @@ export default function AudioRecorderPage() {
           setLinkData(data);
           if (data.status === "RECORDED" && data.audioUrl) {
             setHasRecording(true);
-           const r2Url = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${data.audioUrl}`;
+          const audioUrl = `https://pub-6523bdac96844be89e288477677478f8.r2.dev/${data.audioUrl}`;
 
 
             setAudioURL(r2Url);
