@@ -53,7 +53,9 @@ export default function AudioRecorderPage() {
           setLinkData(data);
           if (data.status === "RECORDED" && data.audioUrl) {
             setHasRecording(true);
-            const r2Url = `https://${process.env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com/${process.env.NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET}/${data.audioUrl}`;
+           const r2Url = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${data.audioUrl}`;
+
+
             setAudioURL(r2Url);
           }
         } else {

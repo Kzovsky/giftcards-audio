@@ -20,10 +20,14 @@ const giftLinkSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", 
+      required: true,
+    },
   },
   { timestamps: true }
 );
-
-
 
 export default mongoose.model("GiftLink", giftLinkSchema);
