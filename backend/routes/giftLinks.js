@@ -1,16 +1,15 @@
-
 import express from "express";
 import multer from "multer";
 import crypto from "crypto";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { r2 } from "../services/r2.js";
 import GiftLink from "../models/GiftLink.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+
 const upload = multer();
 const router = express.Router();
 
-
+// 🔹 Criar GiftLink
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const link = new GiftLink({
@@ -25,7 +24,7 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-
+// 🔹 Ativar
 router.post("/:id/activate", authMiddleware, async (req, res) => {
   try {
     const link = await GiftLink.findOne({ linkId: req.params.id });
@@ -40,7 +39,7 @@ router.post("/:id/activate", authMiddleware, async (req, res) => {
   }
 });
 
-
+// 🔹 Revogar
 router.post("/:id/revoke", authMiddleware, async (req, res) => {
   try {
     const link = await GiftLink.findOne({ linkId: req.params.id });
@@ -55,7 +54,7 @@ router.post("/:id/revoke", authMiddleware, async (req, res) => {
   }
 });
 
-
+// 🔹 Gravar áudio
 router.post("/:id/record", upload.single("audio"), async (req, res) => {
   try {
     console.log("🎧 Upload recebido para:", req.params.id);
@@ -91,7 +90,7 @@ router.post("/:id/record", upload.single("audio"), async (req, res) => {
   }
 });
 
-
+// 🔹 Listar todos (painel admin)
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const links = await GiftLink.find().sort({ createdAt: -1 });
@@ -101,6 +100,8 @@ router.get("/", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Erro ao listar GiftLinks" });
   }
 });
+
+// 🔹 Obter dados do link
 router.get("/:id", async (req, res) => {
   try {
     const link = await GiftLink.findOne({ linkId: req.params.id });
@@ -115,12 +116,41 @@ router.get("/:id", async (req, res) => {
       audioUrl: link.audioUrl || null,
       recordedAt: link.recordedAt || null,
       createdAt: link.createdAt,
+      theme: link.theme || "padrao", // ← agora vem o tema também
     });
   } catch (err) {
     console.error("Erro ao buscar GiftLink:", err);
     res.status(500).json({ error: "Erro ao buscar GiftLink" });
   }
 });
+
+// Atualizar o tema do GiftLink
+router.patch("/:id/theme", authMiddleware, async (req, res) => {
+  try {
+    const { theme } = req.body;
+
+    const validThemes = ["default", "natal", "romantico", "aniversario"];
+    if (!validThemes.includes(theme)) {
+      return res.status(400).json({ error: "Tema inválido" });
+    }
+
+    const link = await GiftLink.findOneAndUpdate(
+      { linkId: req.params.id },
+      { theme },
+      { new: true }
+    );
+
+    if (!link) return res.status(404).json({ error: "GiftLink não encontrado" });
+
+    res.json(link);
+  } catch (err) {
+    console.error("Erro ao atualizar tema:", err);
+    res.status(500).json({ error: "Erro ao atualizar tema" });
+  }
+});
+
+
+// 🔹 Excluir links
 router.post("/delete", authMiddleware, async (req, res) => {
   try {
     const { ids } = req.body;
@@ -128,17 +158,15 @@ router.post("/delete", authMiddleware, async (req, res) => {
       return res.status(400).json({ error: "IDs inválidos" });
     }
 
-
     const links = await GiftLink.find({ _id: { $in: ids } });
 
- 
     for (const link of links) {
       if (link.audioUrl) {
         try {
           await r2.send(
             new DeleteObjectCommand({
               Bucket: process.env.CLOUDFLARE_R2_BUCKET,
-              Key: link.audioUrl, 
+              Key: link.audioUrl,
             })
           );
           console.log(`🗑️ Áudio deletado do R2: ${link.audioUrl}`);
@@ -148,7 +176,6 @@ router.post("/delete", authMiddleware, async (req, res) => {
       }
     }
 
-
     await GiftLink.deleteMany({ _id: { $in: ids } });
 
     res.json({ success: true });
@@ -157,4 +184,5 @@ router.post("/delete", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Erro ao excluir links" });
   }
 });
+
 export default router;

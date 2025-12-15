@@ -26,6 +26,12 @@ const giftLinkSchema = new mongoose.Schema(
       ref: "User", 
       required: true,
     },
+
+    theme: {
+      type: String,
+      enum: ["natal", "aniversario", "casamento", "padrao"],
+      default: "padrao",
+    }
   },
   { timestamps: true }
 );
