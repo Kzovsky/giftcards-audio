@@ -11,7 +11,6 @@ import cardsRoutes from "./routes/cards.js";
 const allowedOrigins = [
   "http://localhost:3000",
   "https://giftcards-audio.vercel.app",
-  /\.vercel\.app$/,
 ];
 
 const __filename = fileURLToPath(import.meta.url);
@@ -29,27 +28,36 @@ app.use(
   })
 );
 
-// 🔥 Força resposta para preflight manualmente
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://giftcards-audio.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Permite requisições sem origin (Postman, server-side)
+      if (!origin) return callback(null, true);
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
+      // Libera qualquer domínio *.vercel.app
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
+      }
 
-  next();
-});
+      return callback(new Error("CORS bloqueado"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// Preflight
+app.options("*", cors());
+
+// Preflight
+app.options("*", cors());
+
 
 app.use(express.json({ type: "application/json" }));
-
-
-
-
-app.use(express.json({ type: "application/json" }));
-
 
 app.use("/api/auth", authRoutes);
 app.use("/api/gift-links", giftLinksRoutes);
