@@ -123,14 +123,19 @@ export default function GiftCardStore() {
               >
                 Contato
               </a>
-              <button className="relative">
-                <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-purple-600 transition-colors" />
-                {cart.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                    {cart.length}
-                  </span>
-                )}
-              </button>
+              <div className="flex items-center gap-4">
+                <a href="/login" className="text-gray-700 hover:text-purple-600 font-medium">
+                  Entrar
+                </a>
+                <button className="relative">
+                  <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-purple-600 transition-colors" />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+              </div>
             </nav>
 
             <button
@@ -164,6 +169,7 @@ export default function GiftCardStore() {
               >
                 Contato
               </a>
+              <a href="/login" className="block text-gray-700 hover:text-purple-600 font-medium">Entrar</a>
             </div>
           </div>
         )}
