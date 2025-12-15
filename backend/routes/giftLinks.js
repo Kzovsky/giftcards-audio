@@ -43,6 +43,7 @@ router.post("/:id/activate", authMiddleware, async (req, res) => {
 
 
 router.post("/:id/revoke", authMiddleware, async (req, res) => {
+  console.log("🧪 ID recebido:", req.params.id);
   try {
     const link = await GiftLink.findOne({ linkId: req.params.id });
     if (!link) return res.status(404).json({ error: "GiftLink não encontrado" });
