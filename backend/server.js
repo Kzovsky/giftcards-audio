@@ -50,11 +50,6 @@ app.use(
   })
 );
 
-// Preflight
-app.options("*", cors());
-
-// Preflight
-app.options("*", cors());
 
 
 app.use(express.json({ type: "application/json" }));
