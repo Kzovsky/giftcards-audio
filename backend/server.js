@@ -10,10 +10,8 @@ import cardsRoutes from "./routes/cards.js";
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "http://127.0.0.1:3000",
   "https://giftcards-audio.vercel.app",
   /\.vercel\.app$/,
-  /https?:\/\/.*\.onrender\.com$/,
 ];
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,35 +23,18 @@ const app = express();
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      const allowed = allowedOrigins.some((o) => {
-        if (o instanceof RegExp) return o.test(origin);
-        return o === origin;
-      });
-      if (allowed) return callback(null, true);
-      return callback(new Error("CORS blocked"), false);
-    },
+    origin: ["http://localhost:3000", "https://giftcards-audio.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
 
-
+// 🔥 Força resposta para preflight manualmente
 app.use((req, res, next) => {
-  const requestOrigin = req.headers.origin;
-  const isAllowed = !!allowedOrigins.find((o) => {
-    if (!requestOrigin) return false;
-    if (o instanceof RegExp) return o.test(requestOrigin);
-    return o === requestOrigin;
-  });
-
-  if (isAllowed) {
-    res.header("Access-Control-Allow-Origin", requestOrigin);
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.header("Access-Control-Allow-Credentials", "true");
-  }
+  res.header("Access-Control-Allow-Origin", "https://giftcards-audio.vercel.app");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
 
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
