@@ -13,10 +13,11 @@ const router = express.Router();
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const link = new GiftLink({
-      linkId: crypto.randomUUID(),
-      status: "PENDING_VALIDATION"
-    });
+const link = new GiftLink({
+  linkId: crypto.randomUUID(),
+  status: "PENDING_VALIDATION",
+  userId: req.user.id, 
+});
     await link.save();
     res.json(link);
   } catch (err) {
