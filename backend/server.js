@@ -31,24 +31,28 @@ app.use(
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Permite requisições sem origin (Postman, server-side)
+      // Libera server-to-server, Postman, Render healthcheck
       if (!origin) return callback(null, true);
 
-      // Libera qualquer domínio *.vercel.app
-      if (
-        allowedOrigins.includes(origin) ||
-        origin.endsWith(".vercel.app")
-      ) {
+      // Libera qualquer domínio da Vercel
+      if (origin.endsWith(".vercel.app")) {
         return callback(null, true);
       }
 
-      return callback(new Error("CORS bloqueado"));
+      // Libera localhost
+      if (origin === "http://localhost:3000") {
+        return callback(null, true);
+      }
+
+      // Bloqueia silenciosamente (SEM erro)
+      return callback(null, false);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 
 
