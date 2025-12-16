@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import giftLinksRoutes from "./routes/giftLinks.js";
 import cardsRoutes from "./routes/cards.js";
+import clientsRoutes from "./routes/clients.js";
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -61,6 +62,7 @@ app.use(express.json({ type: "application/json" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/gift-links", giftLinksRoutes);
 app.use("/api/cards", cardsRoutes);
+app.use("/api/clients", clientsRoutes);
 
 
 app.use((err, req, res, next) => {
