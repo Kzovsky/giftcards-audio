@@ -1,22 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [message, setMessage] = useState<string | null>(null);
 
 	const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+	const router = useRouter();
+	const search = useSearchParams();
+	const from = search?.get("from") || "/";
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
-		setMessage(null);
 
 		try {
-			const res = await fetch(`${API_URL}/api/auth/login`, {
+			const res = await fetch(`${API_URL}/api/clients/login`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ email, password }),
@@ -25,18 +28,20 @@ export default function LoginPage() {
 			const data = await res.json();
 
 			if (!res.ok) {
-				setMessage(data.error || "Erro ao fazer login");
+				toast.error(data.error || "Erro ao fazer login");
 			} else {
 				if (data.token) {
 					localStorage.setItem("token", data.token);
-					setMessage("✅ Logado com sucesso");
+					toast.success("✅ Logado com sucesso");
+					router.push(from);
 				} else {
-					setMessage("Login bem-sucedido");
+					toast.success("Login bem-sucedido");
+					router.push(from);
 				}
 			}
 		} catch (err) {
 			console.error(err);
-			setMessage("Erro de conexão com o servidor");
+			toast.error("Erro de conexão com o servidor");
 		} finally {
 			setLoading(false);
 		}
@@ -80,7 +85,6 @@ export default function LoginPage() {
 					</div>
 				</form>
 
-				{message && <div className="mt-4 text-center">{message}</div>}
 			</div>
 		</div>
 	);

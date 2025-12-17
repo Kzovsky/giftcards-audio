@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { User as UserIcon } from "lucide-react";
 import {
   Gift,
   Mic,
@@ -89,6 +91,16 @@ export default function GiftCardStore() {
     setCart((prev) => [...prev, product]);
   };
 
+  const [isLogged, setIsLogged] = useState(false);
+
+  useEffect(() => {
+    const t = localStorage.getItem("token");
+    setIsLogged(!!t);
+  }, []);
+
+  const router = useRouter();
+  const pathname = usePathname();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-pink-50 scroll-smooth">
       {/* Header */}
@@ -124,9 +136,22 @@ export default function GiftCardStore() {
                 Contato
               </a>
               <div className="flex items-center gap-4">
-                <a href="/login" className="text-gray-700 hover:text-purple-600 font-medium">
-                  Entrar
-                </a>
+                {isLogged ? (
+                  <button
+                    onClick={() => router.push("/profile")}
+                    title="Perfil"
+                    className="text-gray-700 hover:text-purple-600"
+                  >
+                    <UserIcon className="w-6 h-6" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => router.push(`/login?from=${encodeURIComponent(pathname || "/")}`)}
+                    className="text-gray-700 hover:text-purple-600 font-medium"
+                  >
+                    Entrar
+                  </button>
+                )}
                 <button className="relative">
                   <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-purple-600 transition-colors" />
                   {cart.length > 0 && (
@@ -169,7 +194,7 @@ export default function GiftCardStore() {
               >
                 Contato
               </a>
-              <a href="/login" className="block text-gray-700 hover:text-purple-600 font-medium">Entrar</a>
+              <a className="block text-gray-700 hover:text-purple-600 font-medium" onClick={(e) => { e.preventDefault(); const p = typeof window !== 'undefined' ? window.location.pathname : '/'; window.location.href = `/login?from=${encodeURIComponent(p)}`; }}>Entrar</a>
             </div>
           </div>
         )}
