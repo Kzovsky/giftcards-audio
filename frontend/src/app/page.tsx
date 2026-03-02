@@ -94,8 +94,20 @@ export default function GiftCardStore() {
   const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    const t = localStorage.getItem("token");
-    setIsLogged(!!t);
+    const updateIsLogged = () => setIsLogged(!!localStorage.getItem("token"));
+
+    updateIsLogged();
+
+    const onStorage = () => updateIsLogged();
+    const onAuthChanged = () => updateIsLogged();
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("authChanged", onAuthChanged);
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("authChanged", onAuthChanged);
+    };
   }, []);
 
   const router = useRouter();

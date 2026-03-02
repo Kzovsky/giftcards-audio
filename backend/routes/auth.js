@@ -30,7 +30,6 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    console.log("📩 Dados recebidos:", req.body);
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ error: "Credenciais inválidas" });
